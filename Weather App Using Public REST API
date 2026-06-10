@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Weather App</title>
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, sans-serif;
+}
+
+body{
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-height:100vh;
+    background:linear-gradient(135deg, #4facfe, #00f2fe);
+}
+
+.container{
+    background:#fff;
+    padding:30px;
+    border-radius:15px;
+    width:350px;
+    text-align:center;
+    box-shadow:0 4px 15px rgba(0,0,0,0.2);
+}
+
+h1{
+    margin-bottom:20px;
+    color:#333;
+}
+
+input{
+    width:100%;
+    padding:12px;
+    border:1px solid #ccc;
+    border-radius:8px;
+    margin-bottom:15px;
+    font-size:16px;
+}
+
+button{
+    padding:12px 20px;
+    border:none;
+    border-radius:8px;
+    background:#007bff;
+    color:white;
+    font-size:16px;
+    cursor:pointer;
+}
+
+button:hover{
+    background:#0056b3;
+}
+
+#weatherResult{
+    margin-top:20px;
+    text-align:left;
+    line-height:1.8;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+    <h1>🌤 Weather App</h1>
+
+    <input type="text" id="cityInput" placeholder="Enter City Name">
+    <button id="searchBtn">Get Weather</button>
+
+    <div id="weatherResult"></div>
+</div>
+
+<script>
+const apiKey = "YOUR_API_KEY"; // Replace with your OpenWeatherMap API Key
+
+const searchBtn = document.getElementById("searchBtn");
+const weatherResult = document.getElementById("weatherResult");
+
+searchBtn.addEventListener("click", async () => {
+
+    const city = document.getElementById("cityInput").value.trim();
+
+    if(city === ""){
+        weatherResult.innerHTML = "<p>Please enter a city name.</p>";
+        return;
+    }
+
+    const url = `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${apiKey}&units=metric`;
+
+    try{
+        const response = await fetch(url);
+        const data = await response.json();
+
+        if(data.cod != 200){
+            weatherResult.innerHTML = "<p>❌ City not found!</p>";
+            return;
+        }
+
+        weatherResult.innerHTML = `
+            <h2>${data.name}, ${data.sys.country}</h2>
+            <p><strong>🌡 Temperature:</strong> ${data.main.temp} °C</p>
+            <p><strong>💧 Humidity:</strong> ${data.main.humidity}%</p>
+            <p><strong>☁ Weather:</strong> ${data.weather[0].description}</p>
+            <p><strong>💨 Wind Speed:</strong> ${data.wind.speed} m/s</p>
+        `;
+    }
+    catch(error){
+        weatherResult.innerHTML = "<p>⚠ Error fetching weather data.</p>";
+    }
+});
+</script>
+
+</body>
+</html>
